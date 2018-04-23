@@ -17,6 +17,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/shipper', 'ShipperController@index')->name('shipper_list');
+Route::get('/shipper', 'ShipperController@index')->name('shipper_index');
 Route::post('/shipper', 'ShipperController@store')->name('shipper_store');
+Route::get('/shipper/{shipper}', 'ShipperController@show')->name('shipper_show');
+Route::put('/shipper/{shipper}', 'ShipperController@update')->name('shipper_update');
+Route::delete('/shipper/{shipper}', 'ShipperController@destroy')->name('shipper_destroy');
 

@@ -15,7 +15,7 @@ class ShipperController extends Controller
      */
     public function index()
     {
-        // $shippers = Shipper::all();
+        $shippers = Shipper::withTrashed()->get();
         return response()->json(
             $shippers
         );
@@ -28,6 +28,60 @@ class ShipperController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
+    {
+        return $this->save($request);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Shipper  $shipper
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Shipper $shipper)
+    {
+        return response()->json(
+            $shipper
+        );
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Shipper  $shipper
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Shipper $shipper)
+    {
+        return $this->save($request);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Shipper  $shipper
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Shipper $shipper)
+    {
+        $shipper->delete();
+        if (!$shipper->trashed()) {
+            return response()->json([
+                "error" => "Someting went wrong, please try again"
+            ])->setStatusCode(self::BAD_REQUEST);
+        }
+        return;
+    }
+
+    private function validator($data)
+    {
+        return \Validator::make($data, [
+          'name' => 'required|unique:shippers|max:255',
+        ]);
+    }
+
+    private function save($request)
     {
         $data = $request->json()->all();
         $validator = $this->validator($data);
@@ -46,50 +100,7 @@ class ShipperController extends Controller
         } 
 
         return response()->json(
-            $validator
+            $shipper
         );
-        
-        // $shipper = new Shipper;
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Shipper  $shipper
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Shipper $shipper)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Shipper  $shipper
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Shipper $shipper)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Shipper  $shipper
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Shipper $shipper)
-    {
-        //
-    }
-
-    private function validator($data)
-    {
-        return \Validator::make($data, [
-          'name' => 'required|unique:shippers|max:255',
-        ]);
     }
 }
